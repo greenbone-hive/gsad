@@ -209,6 +209,10 @@ if(BUILD_TESTING)
 
   include(${CMAKE_SOURCE_DIR}/cmake/add_unit_test.cmake)
 
+  add_executable(gsad-multi-target-wire-test
+    ${CMAKE_SOURCE_DIR}/tests/multi_target_wire_test.c multi_target_wire.c)
+  add_test(NAME gsad-multi-target-wire COMMAND gsad-multi-target-wire-test)
+
   add_unit_test(gsad-utils)
   add_unit_test(gsad-validator validator.c)
   add_unit_test(gsad-args gsad_env.c gsad_utils.c)
@@ -262,6 +266,7 @@ if(BUILD_TESTING)
   add_custom_target(
     tests
     DEPENDS
+      gsad-multi-target-wire-test
       gsad-validator-test
       gsad-utils-test
       gsad-args-test

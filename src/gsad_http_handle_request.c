@@ -156,6 +156,18 @@ gsad_http_request_init_handlers (gsad_settings_t *gsad_settings)
     "^/logout/?$", gsad_http_method_handler_new_get (logout_handler));
   next = gsad_http_handler_add (next, logout_url_handler);
 
+  // Validate the existing session and restrict the review controller to its
+  // configured GMP account. The nginx auth_request uses this GET endpoint.
+  gsad_http_handler_t *scan_group_auth_handler =
+    gsad_http_handler_new (gsad_http_handle_setup_user);
+  gsad_http_handler_add_from_func (scan_group_auth_handler,
+                                   gsad_http_handle_scan_group_auth);
+  gsad_http_handler_t *scan_group_auth_url_handler =
+    gsad_http_url_handler_new (
+      "^/scan-group-auth$",
+      gsad_http_method_handler_new_get (scan_group_auth_handler));
+  next = gsad_http_handler_add (next, scan_group_auth_url_handler);
+
   if (!is_api_only)
     {
       // fallback to index handler for get requests in non API-only mode, so

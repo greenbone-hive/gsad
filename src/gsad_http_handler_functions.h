@@ -29,6 +29,11 @@ gsad_http_handle_setup_user (gsad_http_handler_t *, void *,
                              void *);
 
 gsad_http_result_t
+gsad_http_handle_scan_group_auth (gsad_http_handler_t *, void *,
+                                  gsad_http_connection_t *,
+                                  gsad_connection_info_t *, void *);
+
+gsad_http_result_t
 gsad_http_handle_setup_credentials (gsad_http_handler_t *, void *,
                                     gsad_http_connection_t *,
                                     gsad_connection_info_t *, void *);

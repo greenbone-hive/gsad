@@ -364,6 +364,32 @@ gsad_http_handle_setup_credentials (gsad_http_handler_t *handler_next,
                                  credentials);
 }
 
+/* The review controller uses a shared GMP account. Authorize only the same
+ * server-side GSAD session identity, after setup_user validates its token,
+ * cookie, expiry and client address. */
+gsad_http_result_t
+gsad_http_handle_scan_group_auth (gsad_http_handler_t *handler_next,
+                                  void *handler_data,
+                                  gsad_http_connection_t *connection,
+                                  gsad_connection_info_t *con_info, void *data)
+{
+  gsad_user_t *user = (gsad_user_t *) data;
+  const gchar *operator_username = g_getenv ("SCAN_GROUP_GMP_USERNAME");
+  int status;
+
+  if (operator_username == NULL || operator_username[0] == '\0')
+    status = MHD_HTTP_SERVICE_UNAVAILABLE;
+  else if (user != NULL
+           && g_strcmp0 (gsad_user_get_username (user), operator_username) == 0)
+    status = MHD_HTTP_NO_CONTENT;
+  else
+    status = MHD_HTTP_FORBIDDEN;
+
+  gsad_user_free (user);
+  return gsad_http_send_response_for_content (
+    connection, "", status, NULL, GSAD_CONTENT_TYPE_TEXT_HTML, NULL, 0);
+}
+
 /**
  * @brief Handler for processing logout requests
  *
